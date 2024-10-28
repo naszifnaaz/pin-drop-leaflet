@@ -3,6 +3,7 @@ import {
   TileLayer,
   Marker,
   Popup,
+  useMap,
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -12,12 +13,27 @@ import {
   setAddress,
   setPosition,
 } from "../store/features/map.slice";
+import { useEffect } from "react";
+
+// Component to zoom and center map on the selected position
+const ZoomToLocation = ({ position, zoomLevel }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (position) {
+      map.setView(position, zoomLevel); // Center and zoom map on the specified position
+    }
+  }, [position, zoomLevel, map]);
+
+  return null; // This component only performs a side effect; it renders nothing
+};
 
 const MapComponent = () => {
   const dispatch = useDispatch();
   const markerPosition = useSelector((store) => store.map.markerPosition);
   const address = useSelector((store) => store.map.address);
   const savedLocations = useSelector((store) => store.map.savedLocations);
+  const zoomLevel = 13; // Default zoom level for focusing on selected location
 
   // Function to fetch address from Nominatim API
   const fetchAddress = async (lat, lng) => {
@@ -77,8 +93,9 @@ const MapComponent = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <LocationMarker /> {/* Add the LocationMarker component to the map */}
-      {/* Render saved locations as markers */}
+      <LocationMarker /> {/* Handles clicks and marker positioning */}
+      <ZoomToLocation position={markerPosition} zoomLevel={zoomLevel} />{" "}
+      {/* Zooms to marker position */}
       {savedLocations.map((location, index) => (
         <Marker key={index} position={location.position}>
           <Popup>{location.address}</Popup>

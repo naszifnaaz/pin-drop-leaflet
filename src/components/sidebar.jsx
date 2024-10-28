@@ -26,8 +26,7 @@ export function PinSidebar() {
 
   // Function to handle click on saved location
   const handleLocationClick = (position) => {
-    console.log("handle");
-    dispatch(setPosition(position)); // Update the map position
+    dispatch(setPosition(position)); // Update the map position in Redux
   };
 
   return (
