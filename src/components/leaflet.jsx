@@ -16,12 +16,17 @@ import {
 } from "../store/features/map.slice";
 import { useEffect } from "react";
 
+// Import marker icon images using ES6 import
+import markerIconUrl from "leaflet/dist/images/marker-icon.png";
+import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+
 // Set up default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+  iconRetinaUrl: markerIconRetinaUrl,
+  iconUrl: markerIconUrl,
+  shadowUrl: markerShadowUrl,
 });
 
 // Component to zoom and center map on the selected position
