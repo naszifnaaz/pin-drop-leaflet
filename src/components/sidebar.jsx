@@ -2,7 +2,7 @@ import { HiMiniMapPin } from "react-icons/hi2";
 import { IoMdCloseCircle } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.png";
-import { removeLocation } from "../store/features/map.slice";
+import { removeLocation, setPosition } from "../store/features/map.slice";
 
 export function PinSidebar() {
   const dispatch = useDispatch();
@@ -22,6 +22,12 @@ export function PinSidebar() {
   // Function to remove pinned locations
   const handleDelete = (index) => {
     dispatch(removeLocation(index));
+  };
+
+  // Function to handle click on saved location
+  const handleLocationClick = (position) => {
+    console.log("handle");
+    dispatch(setPosition(position)); // Update the map position
   };
 
   return (
@@ -47,10 +53,15 @@ export function PinSidebar() {
               </button>
 
               <div className="flex items-center space-x-3 mt-2 pr-10">
-                <HiMiniMapPin className="h-5 w-5" />
-                <span className="text-sm font-medium">
-                  {formatAddress(el.address)}
-                </span>
+                <button
+                  onClick={() => handleLocationClick(el.position)}
+                  className="flex items-center space-x-3 w-full text-left"
+                >
+                  <HiMiniMapPin className="h-5 w-5" />
+                  <span className="text-sm font-medium">
+                    {formatAddress(el.address)}
+                  </span>
+                </button>
               </div>
             </li>
           ))}
