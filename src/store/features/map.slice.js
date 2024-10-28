@@ -22,8 +22,13 @@ export const MapSlice = createSlice({
       state.savedLocations.push(action.payload);
       toast.success("Location saved!");
     },
+    removeLocation: (state, action) => {
+      state.savedLocations.splice(action.payload, 1);
+      toast.success("Location removed!");
+    },
   },
 });
 
 export default MapSlice.reducer;
-export const { setPosition, setAddress, saveLocation } = MapSlice.actions;
+export const { setPosition, setAddress, saveLocation, removeLocation } =
+  MapSlice.actions;
