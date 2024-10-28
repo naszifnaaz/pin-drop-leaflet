@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
 const initialState = {
   markerPosition: null,
@@ -19,6 +20,7 @@ export const MapSlice = createSlice({
     },
     saveLocation: (state, action) => {
       state.savedLocations.push(action.payload);
+      toast.success("Location saved!");
     },
   },
 });

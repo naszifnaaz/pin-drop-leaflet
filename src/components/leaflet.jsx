@@ -6,12 +6,18 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  saveLocation,
+  setAddress,
+  setPosition,
+} from "../store/features/map.slice";
 
 const MapComponent = () => {
-  const [markerPosition, setMarkerPosition] = useState(null); // Track the marker position
-  const [address, setAddress] = useState(""); // Track fetched address
-  const [savedLocations, setSavedLocations] = useState([]); // Track saved locations
+  const dispatch = useDispatch();
+  const markerPosition = useSelector((store) => store.map.markerPosition);
+  const address = useSelector((store) => store.map.address);
+  const savedLocations = useSelector((store) => store.map.savedLocations);
 
   // Function to fetch address from Nominatim API
   const fetchAddress = async (lat, lng) => {
@@ -19,10 +25,22 @@ const MapComponent = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      setAddress(data.display_name || "Address not found");
+      dispatch(setAddress(data.display_name || "Address not found"));
     } catch (error) {
       console.error("Failed to fetch address:", error);
-      setAddress("Failed to fetch address");
+      dispatch(setAddress("Failed to fetch address"));
+    }
+  };
+
+  // Function to save pinned location
+  const pinLocation = () => {
+    if (markerPosition && address) {
+      dispatch(
+        saveLocation({
+          position: markerPosition,
+          address,
+        })
+      );
     }
   };
 
@@ -31,28 +49,18 @@ const MapComponent = () => {
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-        setMarkerPosition([lat, lng]); // Set marker position
-        fetchAddress(lat, lng); // Fetch address for clicked location
+        dispatch(setPosition([lat, lng]));
+        fetchAddress(lat, lng);
       },
     });
 
-    // Render the marker and popup if markerPosition is set
+    // Render the marker and popup only if markerPosition is set
     return markerPosition ? (
       <Marker position={markerPosition}>
         <Popup>
           <div>
             <p>{address}</p>
-            <button
-              onClick={() => {
-                setSavedLocations([
-                  ...savedLocations,
-                  { position: markerPosition, address },
-                ]);
-                alert("Location saved!");
-              }}
-            >
-              Save Location
-            </button>
+            <button onClick={pinLocation}>Save Location</button>
           </div>
         </Popup>
       </Marker>
