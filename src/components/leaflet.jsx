@@ -7,6 +7,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet"; // Importing Leaflet
 import { useSelector, useDispatch } from "react-redux";
 import {
   saveLocation,
@@ -14,6 +15,14 @@ import {
   setPosition,
 } from "../store/features/map.slice";
 import { useEffect } from "react";
+
+// Set up default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+  iconUrl: require("leaflet/dist/images/marker-icon.png"),
+  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+});
 
 // Component to zoom and center map on the selected position
 const ZoomToLocation = ({ position, zoomLevel }) => {
@@ -86,7 +95,7 @@ const MapComponent = () => {
   return (
     <MapContainer
       center={[51.505, -0.09]}
-      zoom={13}
+      zoom={zoomLevel}
       style={{ height: "100vh", width: "100vw" }}
     >
       <TileLayer
